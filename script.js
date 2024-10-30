@@ -444,6 +444,8 @@ function iconFetch(data){
     
     if(timeIn24 === 0 || timeIn24 < 6){
 
+        document.body.style = `background-image: linear-gradient(rgba(1, 1, 1, 0.5),rgba(0, 0, 0, 0.2)) ,  url('./Images/misty-day-fog-nature-trees.jpg');`
+
         if(data.weather[0].description === "scattered clouds" ){
             return "./icons/partly-cloudy-night.svg"
         }
@@ -459,7 +461,29 @@ function iconFetch(data){
         }
     }
 
+    else if(timeIn24 > 17){
+
+        document.body.style = `background-image: linear-gradient(rgba(1, 1, 1, 0.5),rgba(0, 0, 0, 0.2)) ,  url('./Images/misty-day-fog-nature-trees.jpg');`
+
+        if(data.weather[0].description === "scattered clouds" ){
+            return "./icons/partly-cloudy-night.svg"
+        }
+        else if(data.weather[0].description === "broken clouds"){
+            return "./icons/partly-cloudy-night.svg"
+        }
+        else if(data.weather[0].description === "few clouds"){
+            return "./icons/partly-cloudy-night.svg"
+        }
+        
+        if(data.weather[0].main === "Clear"){
+            return "./icons/clear-night.svg"
+        }
+       
+    }
+
     else if(timeIn24 > 5 ){
+
+        document.body.style = `background-image: linear-gradient(rgba(0, 168, 235, 0.7),rgba(23, 130, 24, 0.2)) ,  url('./Images/misty-day-fog-nature-trees.jpg');`
 
         if(data.weather[0].description === "scattered clouds" ){
             return "./icons/partly-cloudy-day.svg"
@@ -473,24 +497,6 @@ function iconFetch(data){
         
         if(data.weather[0].main === "Clear"){
             return "./icons/clear-day.svg"
-        }
-       
-    }
-
-    else if(timeIn24 > 17){
-
-        if(data.weather[0].description === "scattered clouds" ){
-            return "./icons/partly-cloudy-night.svg"
-        }
-        else if(data.weather[0].description === "broken clouds"){
-            return "./icons/partly-cloudy-night.svg"
-        }
-        else if(data.weather[0].description === "few clouds"){
-            return "./icons/partly-cloudy-night.svg"
-        }
-        
-        if(data.weather[0].main === "Clear"){
-            return "./icons/clear-night.svg"
         }
        
     }
