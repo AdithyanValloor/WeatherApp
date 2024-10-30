@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Now</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="./images/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="container">
+        <div class="search-box">
+            <div class="title">
+                <h1>Weather Now</h1>
+                <img src="./icons/partly-cloudy-day.svg" alt="" width="50px">
+            </div>
+            <form action="">
+                <input class="user-input" type="text" placeholder="Search your city">
+                <button class="btn-search" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+           
+        </div>
+        <div class="weather-container">
+
+
+            <!-- <div class="top">
+                <div class="weather">
+                    
+                    <div class="weather-inner">
+                        <div class="weather-img">
+                            <div class="location-now">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M517-144 416-416 144-517v-35l672-264-264 672h-35Zm19-156 152-388-388 152 171 65 65 171Zm-65-171Z"/></svg>
+                                <p>Kochi now,</p>
+                            </div>
+                            <img src="./icons/overcast.svg" alt="">
+                        </div>
+                        <div>
+                            <h1>20°c</h1>
+                            <h2>Rainy 20°/15°</h2>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="weather-inner-bottom">
+                        <div class="date">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>    
+                            <p>
+                                Sun 27, Oct
+                            </p>
+                        </div>
+                        <div class="location">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>   
+                            <p>
+                                New York , USA
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="other-details">
+                    <div class="right-1">
+                        <div class="time">
+                            <p>Current time</p>
+                            <div>
+                                <img src="./svg/schedule_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="" style="margin: 0 12.5px;">
+                                <h2>12 : 23 am</h2>
+                            </div>
+                        </div>
+                        <div class="wind">
+                            <p>Wind Speed</p>
+                            <div>
+                                <img src="./icons/windsock.svg" alt="">
+                                <h2>4.5 kph</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-2">
+                        <div class="sunrise">
+                            <div>
+                                <p>Sunrise</p>
+                            </div>
+                            <div class="sunriseTime">
+                                <img src="./icons/sunrise.svg" alt="">
+                                <h2>06 : 23 am</h2>
+                            </div>
+                        </div>
+                        <div class="sunrise">
+                            <div>
+                                <p>Sunset</p>
+                            </div>
+                            <div class="sunriseTime">
+                                <img src="./icons/sunset.svg" alt="">
+                                <h2>06 : 23 pm</h2>
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="right-3">
+                        <p>Air Quality</p>
+                        <div class="air-quality-content">
+                            <img src="./icons/wind.svg" alt="">
+                            <div class="air-values-container">
+                                <div class="air-values">
+                                    <p>PM2.5</p>                      
+                                    <h2>15.3</h2>          
+                                </div>   
+                                <div class="air-values">
+                                    <p>PM10</p>                      
+                                    <h2>3.76</h2>
+                                </div>   
+                                <div class="air-values">
+                                    <p>NO2</p>                      
+                                    <h2>8.14</h2>
+                                </div>   
+                                <div class="air-values">
+                                    <p>CO2</p>                   
+                                    <h2>106</h2>
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="other-details-2">
+                <div class="bottom-1">
+                    <p>Feels like</p>
+                    <div>
+                        <img src="./icons/thermometer-glass-celsius.svg" alt="" >
+                        <h3>22°c</h3>
+                    </div>
+                </div>
+                <div class="bottom-2">
+                    <p>Pressure</p>
+                    <div>
+                        <img src="./icons/barometer.svg" alt="" >
+                        <h3>1020hPa</h3>
+                    </div>
+                </div>
+                <div class="bottom-3">
+                    <p>Humidity</p>
+                    <div>
+                        <img src="./icons/humidity.svg" alt="" >
+                        <h3>70%</h3>
+                    </div>
+                </div>
+                <div class="bottom-4">
+                    <p>Visibility</p>
+                    <div>
+                        <img src="./svg/visibility_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="" style="margin: 0 12.25px;">
+                        <h3>12km</h3>
+                    </div>
+                </div>
+            </div> -->
+            <img id="loading" src="./svg/fade-stagger-circles.svg" alt="">
+
+        </div>
+    </div>
+    
+
+    <script src="script.js"></script>
+</body>
+</html>
