@@ -33,18 +33,16 @@ async function weatherAPICall(city){
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
 
     try {
-        
+ 
         const response = await fetch(api)
 
         const data = await response.json()
-        
-        return data
 
+        return data
 
     } catch (error) {
         
         console.log(error);
-        
         
     }
 
@@ -81,8 +79,6 @@ async function locationAPI(data){
 
 async function airQualityAPI(data){
 
-    console.log(data);
-    
     const lat = data.coord.lat
 
     const lon = data.coord.lon
@@ -95,8 +91,6 @@ async function airQualityAPI(data){
 
         const data = await response.json()
         
-        console.log(data);
-
         return data
 
     } catch (error) {
@@ -116,8 +110,6 @@ function getLocation(){
     navigator.geolocation.getCurrentPosition(locationSuccess,locationFailed)
 
     async function locationSuccess(position){
-
-        console.log(position);
 
         const cityData = await locationAPI(position)
 
@@ -150,11 +142,7 @@ form.addEventListener('submit', async (e)=>{
 
     let city = document.querySelector('.user-input').value
 
-    console.log(city);
-
     const weatherData = await weatherAPICall(city)
-    
-    console.log(weatherData);
 
     if(weatherData.cod === '404'){
         
@@ -179,8 +167,6 @@ form.addEventListener('submit', async (e)=>{
 // =========================================== DISPLAY WEATHER FUNCTION ===========================================
 
 function displyWeather(data,air,location){
-
-    console.log(data);
     
     const o3 = air.list[0].components.o3
     const no2 = air.list[0].components.no2
@@ -263,23 +249,22 @@ function displyWeather(data,air,location){
             </div>
             <div class="other-details">
                 <div class="right-1">
-                     <div class="right-1">
-                        <div class="time">
-                            <p>Current time</p>
-                            <div>
-                                <img src="./svg/schedule_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="" style="margin: 0 12.5px;">
-                                <h2>${currentTime}</h2>
-                            </div>
+                    <div class="time">
+                        <p>Current time</p>
+                        <div>
+                            <img src="./svg/schedule_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg" alt="" style="margin: 0 12.5px;">
+                            <h2>${currentTime}</h2>
                         </div>
-                        <div class="wind">
-                            <p>Wind Speed</p>
-                            <div>
-                                <img src="./icons/windsock.svg" alt="">
-                                <h2>${windspeed} kph</h2>
-                            </div>
+                    </div>
+                    <div class="wind">
+                        <p>Wind Speed</p>
+                        <div>
+                            <img src="./icons/windsock.svg" alt="">
+                            <h2>${windspeed} kph</h2>
                         </div>
                     </div>
                 </div>
+             
                 <div class="right-2">
                     <div class="sunrise">
                         <div>
@@ -358,7 +343,9 @@ function displyWeather(data,air,location){
         </div>
      
     `
-    
+
+    location ? console.log(`Weather at your place ${placeName} is ${description}, temperature feels like ${temp}°c`) : console.log(`Weather at ${placeName} is ${description}, temperature feels like ${temp}°c`) ;
+        
     document.querySelector('.weather-container').innerHTML = displayHTML
     document.querySelector('.title').innerHTML = displaylogo
     
@@ -388,7 +375,7 @@ function sunriseSunset(data,req){
     const hours = dateinLocal.getUTCHours()%12;
     const minutes = '0' + dateinLocal.getUTCMinutes()
 
-    const finaleTime = hours + ':' + minutes.substr(-2) + ' ' +meridian
+    const finaleTime = hours + ':' + minutes.slice(-2) + ' ' +meridian
     
     return finaleTime
 
@@ -438,9 +425,6 @@ function getDate(data,req){
 // =========================================== GET WEATHER ICON ===========================================
 
 function iconFetch(data){
-
-    console.log(timeIn24);
-
     
     if(timeIn24 === 0 || timeIn24 < 6){
 
