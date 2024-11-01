@@ -5,6 +5,8 @@ const form = document.querySelector('form')
 const loader = document.getElementById('loading')
 const searchBtn = document.querySelector('.btn-search')
 const apiKey = 'befd984de4d3c050671d4eb935e6c660';
+const input = document.querySelector('.user-input')
+const suggestionsContainer = document.getElementById("suggestions");
 
 // WINDOW LOAD
 
@@ -27,14 +29,22 @@ window.addEventListener('load', async ()=>{
 
 //=========================================== WEATHER API ===========================================
 
+let state = ''
+let country = ''
 
-async function weatherAPICall(city){
+async function weatherAPICall(city,state,country){
 
-    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
+    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city},${state},${country}&appid=${apiKey}`
 
     try {
  
         const response = await fetch(api)
+
+        if(response.status === 404){
+
+            // alert('Error with your current coords'); 
+
+        }
 
         const data = await response.json()
 
@@ -101,7 +111,116 @@ async function airQualityAPI(data){
 
 }
 
+//=========================================== COUNTRY IN FULL NAME =========================================== 
 
+async function countryInFull(data){
+
+    const countryCode = data.sys.country
+    
+    const countryInFullAPI = `https://restcountries.com/v3.1/alpha/${countryCode}`
+
+    try {
+        
+        const response = await fetch(countryInFullAPI)
+
+        const data = await response.json()
+
+        console.log(data);
+        
+        console.log(data[0].name.common)
+
+        return data[0].name.common 
+
+    } catch (error) {
+
+        console.log(error);
+        
+    }
+
+}
+
+//=========================================== AUTO SUGGESTIONS API =========================================== 
+
+input.addEventListener("input", async () => {
+
+    const query = input.value
+
+    if (query.length < 3) {
+        suggestionsContainer.innerHTML = ''; 
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1`);
+        const data = await response.json();
+
+        console.log(data);
+        
+        
+        displaySuggestions(data);
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+});
+
+function displaySuggestions(suggestions) {
+
+    suggestionsContainer.innerHTML = ''; 
+
+    suggestions = suggestions.slice(0,3)
+
+    suggestions.forEach(suggestion => {
+        const div = document.createElement("div");
+        div.classList.add("suggestion");
+       
+        if(suggestion.addresstype === 'city' || suggestion.addresstype === 'county' || suggestion.addresstype === 'town' || suggestion.addresstype === 'village' || suggestion.addresstype === 'municipality' || suggestion.addresstype === 'state'){
+            
+
+            div.textContent = `${suggestion.name}, ${suggestion.address.state || suggestion.address.province || ''} ${suggestion.address.country}`;
+            div.addEventListener("click", async () => {
+                city = suggestion.name; 
+                suggestionsContainer.innerHTML = ''; 
+
+                state = suggestion.address.state
+                country = suggestion.address.country_code 
+
+                console.log(state,country);
+                
+
+                const weatherData = await weatherAPICall(city,state,country)
+
+                if(weatherData.cod === '404'){
+                    
+                    console.log('location not found');
+
+                    document.querySelector('.user-input').placeholder = '⚠︎ Location not found'
+                    
+                }else{
+                    
+                    document.querySelector('.user-input').placeholder = 'Search your city'
+
+                }
+
+                document.querySelector('.user-input').value = ''
+
+                const airQuality = await airQualityAPI(weatherData)
+
+                displyWeather(weatherData,airQuality)
+
+
+            });
+            suggestionsContainer.appendChild(div);
+        }
+       
+    });
+}
+
+document.addEventListener("click", (event) => {
+    if (!suggestionsContainer.contains(event.target) && event.target !== input) {
+        suggestionsContainer.innerHTML = '';
+    }
+});
 
 //=========================================== GET LOCATION FUNCTION =========================================== 
 
@@ -125,9 +244,7 @@ function getLocation(){
     
     function locationFailed(){
     
-        console.log('error getting location');
-    
-        return 'error getting location'
+        // alert('Pleaser turn on your location')
     
     }
 
@@ -140,7 +257,7 @@ form.addEventListener('submit', async (e)=>{
     
     e.preventDefault()
 
-    let city = document.querySelector('.user-input').value
+    let city = input.value
 
     const weatherData = await weatherAPICall(city)
 
@@ -166,8 +283,10 @@ form.addEventListener('submit', async (e)=>{
 
 // =========================================== DISPLAY WEATHER FUNCTION ===========================================
 
-function displyWeather(data,air,location){
-    
+async function displyWeather(data,air,location){
+
+    const countryName = await countryInFull(data)
+
     const o3 = air.list[0].components.o3
     const no2 = air.list[0].components.no2
     const pm25 = air.list[0].components.pm10
@@ -179,12 +298,11 @@ function displyWeather(data,air,location){
     const maxTemp = Math.trunc(data.main.temp_max - 273.15)
     const minTemp = Math.trunc(data.main.temp_min - 273.15)
     const feelsLikeTemp = Math.trunc(data.main.feels_like - 273.15)
-    const country = data.sys.country
     const placeName = data.name
     const pressure = data.main.pressure
     const humidity = data.main.humidity
     const visibility = data.visibility/1000
-    const description = data.weather[0].description
+    const description = ((data.weather[0].description).charAt(0).toUpperCase() + (data.weather[0].description).slice(1))
 
     const sunrise = sunriseSunset(data,'sunrise')
     const sunset = sunriseSunset(data,'sunset')
@@ -242,7 +360,7 @@ function displyWeather(data,air,location){
                     <div class="location">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>   
                         <p>
-                            ${placeName} , ${country}
+                            ${placeName} , ${countryName}
                         </p>
                     </div>
                 </div>

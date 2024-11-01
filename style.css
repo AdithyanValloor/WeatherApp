@@ -13,7 +13,6 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    transition: all 0.5s ease-in-out;
 }
 
 .container{
@@ -36,7 +35,6 @@ body{
     left: 40px;
     display: flex;
     align-items: center;
-    z-index: 2;
     text-align: center;
 }
 
@@ -47,13 +45,15 @@ body{
 }
 
 .user-input{
-    width: 400px;
+    width: 100%;
     height: 40px;
     border: none;
     border-radius: 25px;
     padding-left: 20px;
     font-size: 17px;
-    transition: all 0.5s;
+    position: absolute;
+    z-index: 2;
+    background-color: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
@@ -73,9 +73,12 @@ body{
 }
 
 form{
+    width: 350px;
+    height: 20px;
     margin-left: auto;
     margin-right: auto;
     position: relative;
+  
 }
 
 .btn-search{
@@ -90,7 +93,33 @@ form{
     color: rgb(64, 64, 64);
     background-color: rgb(255, 255, 255);
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    z-index: 2;
+}
+
+
+#suggestions{
+    width: 100%;
+    max-height: 300px;
+    background-color: rgb(241, 241, 241);
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    position: absolute;
+    top: 20px;
+    padding-top: 20px;
+    cursor: pointer;
+    z-index: 1;
+    overflow: hidden;
+    opacity: 0.9;
+    
+}
+
+.suggestion{
+   display: flex;
+   align-items: center;
+   padding:10px 20px;
+}
+.suggestion:hover{
+    background-color: #d4d4d4;
 }
 
 .btn-search:hover{
@@ -107,8 +136,6 @@ form{
     gap: 5px;
 }
 
-
-
 .weather-container{
     width: 650px;
     height: 450px;
@@ -119,7 +146,6 @@ form{
     padding: 20px;
     display: flex;
     flex-direction: column;
-    transition: all 0.2s;
     gap: 10px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
