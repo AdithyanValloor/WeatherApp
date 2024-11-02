@@ -33,7 +33,10 @@ let country = ''
 
 async function weatherAPICall(city,state,country){
 
-    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city},${state},${country}&appid=${apiKey}`
+    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}` 
+    
+    // api = `https://api.openweathermap.org/data/2.5/weather?q=${city},${state}&appid=${apiKey}`
+
     
     // const api = `https://api.openweathermap.org/data/2.5/weather?id=${placeId}&appid=${apiKey}`
 
@@ -170,6 +173,8 @@ async function countryInFull(data){
 
 input.addEventListener("input", async () => {
 
+    suggestionsContainer.style.display = 'block'
+
     const query = input.value
 
     if (query.length < 3) {
@@ -180,7 +185,7 @@ input.addEventListener("input", async () => {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`);
         const data = await response.json();
-           
+      
         displaySuggestions(data);
 
     } catch (error) {
@@ -192,63 +197,79 @@ function displaySuggestions(suggestions) {
 
     suggestionsContainer.innerHTML = ''; 
 
-    let suggestionsArr = suggestions.slice(0,3)
+    const seenLocations = new Set(); 
 
-    suggestionsArr.forEach(suggestion => {
+    const uniqueSuggestions = []
+
+    suggestions.forEach(suggestion => {
+
+        const displayName = suggestion.address.county;
+
+        if( suggestion.class === 'place' || suggestion.addresstype === "municipality" || suggestion.addresstype === 'city' || suggestion.addresstype === 'town' || suggestion.addresstype === "province" || suggestion.addresstype === 'county' || suggestion.addresstype === 'state' ){
+
+            if (!seenLocations.has(displayName)) {
+                seenLocations.add(displayName); 
+                uniqueSuggestions.push(suggestion); 
+            }
+
+        }
+         
+    });
+
+    uniqueSuggestions.slice(0,4).forEach(suggestion => {
+
         const div = document.createElement("div");
         div.classList.add("suggestion");
-       
-        if( suggestion.class === 'place' || suggestion.addresstype === "municipality" || suggestion.addresstype === 'city' || suggestion.addresstype === "province" || suggestion.addresstype === 'county'){
-            
-            let stateSuggestion = ''
+        
+        let stateSuggestion = ''
 
-            suggestion.address.state || suggestion.address.province ? stateSuggestion = suggestion.address.state || suggestion.address.province : stateSuggestion = ''
+        suggestion.address.state || suggestion.address.province ? stateSuggestion = suggestion.address.state || suggestion.address.province : stateSuggestion = ''
 
-            div.textContent = `${suggestion.name}, ${stateSuggestion}  ${suggestion.address.country}`;
-           
-            div.addEventListener("click", async () => {
+        div.textContent = `${suggestion.name}, ${stateSuggestion}  ${suggestion.address.country}`;
+        
+        div.addEventListener("click", async () => {
 
-                city = suggestion.name; 
+            city = suggestion.name; 
 
-                suggestionsContainer.innerHTML = ''; 
+            suggestionsContainer.innerHTML = ''; 
 
-                let lat = suggestion.lat
-                let lon = suggestion.lon
+            let lat = suggestion.lat
+            let lon = suggestion.lon
 
-                let placeName = suggestion.name
-                let state = suggestion.address.state || suggestion.address.province
-                               
+            let placeName = suggestion.name
+            let state = suggestion.address.state || suggestion.address.province
+                            
 
-                country = suggestion.address.country_code
+            country = suggestion.address.country_code
 
 
-                locationState = false
-                 
+            locationState = false
+                
 
-                const weatherData = await weatherAPICallLatLon(lat,lon)
+            const weatherData = await weatherAPICallLatLon(lat,lon)
 
-                if(weatherData.cod === '404'){
-                    
-                    console.log('location not found');
+            if(weatherData.cod === '404'){
+                
+                console.log('location not found');
 
-                    document.querySelector('.user-input').placeholder = '⚠︎ Location not found'
-                    
-                }else{
-                    
-                    document.querySelector('.user-input').placeholder = 'Search your city'
+                document.querySelector('.user-input').placeholder = '⚠︎ Location not found'
+                
+            }else{
+                
+                document.querySelector('.user-input').placeholder = 'Search your city'
 
-                }
+            }
 
-                document.querySelector('.user-input').value = ''
+            document.querySelector('.user-input').value = ''
 
-                const airQuality = await airQualityAPI(weatherData)
+            const airQuality = await airQualityAPI(weatherData)
 
-                displyWeather(weatherData,airQuality,locationState,state,placeName)
+            displyWeather(weatherData,airQuality,locationState,state,placeName)
 
 
-            });
-            suggestionsContainer.appendChild(div);
-        }
+        });
+        suggestionsContainer.appendChild(div);
+     
        
     });
 }
@@ -297,10 +318,14 @@ form.addEventListener('submit', async (e)=>{
     
     e.preventDefault()
 
-    if (!suggestionsContainer.contains(event.target) && event.target !== input) {
-        suggestionsContainer.innerHTML = '';
-    }
+    suggestionsContainer.style.display = 'none'
 
+    // stopAsyncFunction()
+
+    // function stopAsyncFunction() {
+    //     shouldContinue = false;
+    // }
+   
     let city = input.value.trim()
 
     const weatherData = await weatherAPICall(city)
