@@ -185,6 +185,9 @@ input.addEventListener("input", async () => {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`);
         const data = await response.json();
+
+        console.log(data);
+        
       
         displaySuggestions(data);
 
@@ -205,7 +208,9 @@ function displaySuggestions(suggestions) {
 
         const displayName = suggestion.address.county;
 
-        if( suggestion.class === 'place' || suggestion.addresstype === "municipality" || suggestion.addresstype === 'city' || suggestion.addresstype === 'town' || suggestion.addresstype === "province" || suggestion.addresstype === 'county' || suggestion.addresstype === 'state' ){
+        if( suggestion.class === 'place' || suggestion.addresstype === "village" || suggestion.addresstype === 'town' || suggestion.addresstype === "city" || suggestion.addresstype === 'municipality'  || suggestion.addresstype === "province" || suggestion.addresstype === "local_authority" || suggestion.addresstype === 'county' || suggestion.addresstype === 'state' ){
+
+            // "local_authority"
 
             if (!seenLocations.has(displayName)) {
                 seenLocations.add(displayName); 
@@ -215,6 +220,8 @@ function displaySuggestions(suggestions) {
         }
          
     });
+
+    console.log(uniqueSuggestions);
 
     uniqueSuggestions.slice(0,4).forEach(suggestion => {
 
