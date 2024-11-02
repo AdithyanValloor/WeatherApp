@@ -48,8 +48,6 @@ async function weatherAPICall(city,state,country){
         }
 
         const data = await response.json()
-
-        console.log(data);
         
         return data
 
@@ -80,10 +78,7 @@ async function weatherAPICallLatLon(lat,lon){
         }
 
         const data = await response.json()
-
-        console.log(data);
         
-
         return data
 
     } catch (error) {
@@ -161,10 +156,6 @@ async function countryInFull(data){
 
         const data = await response.json()
 
-        console.log(data);
-        
-        console.log(data[0].name.common)
-
         return data[0].name.common 
 
     } catch (error) {
@@ -189,10 +180,7 @@ input.addEventListener("input", async () => {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`);
         const data = await response.json();
-
-        console.log(data);
-        
-        
+           
         displaySuggestions(data);
 
     } catch (error) {
@@ -204,15 +192,19 @@ function displaySuggestions(suggestions) {
 
     suggestionsContainer.innerHTML = ''; 
 
-    let suggestionsArr = suggestions.slice(0,5)
+    let suggestionsArr = suggestions.slice(0,3)
 
     suggestionsArr.forEach(suggestion => {
         const div = document.createElement("div");
         div.classList.add("suggestion");
        
-        if( suggestion.addresstype === 'village' || suggestion.addresstype === 'city' || suggestion.addresstype === 'county' || suggestion.addresstype === 'town' || suggestion.addresstype === 'municipality' || suggestion.addresstype === 'state'){
+        if( suggestion.class === 'place' || suggestion.addresstype === "municipality" || suggestion.addresstype === 'city' || suggestion.addresstype === "province" || suggestion.addresstype === 'county'){
+            
+            let stateSuggestion = ''
 
-            div.textContent = `${suggestion.name}, ${suggestion.address.state || suggestion.address.province }, ${suggestion.address.country}`;
+            suggestion.address.state || suggestion.address.province ? stateSuggestion = suggestion.address.state || suggestion.address.province : stateSuggestion = ''
+
+            div.textContent = `${suggestion.name}, ${stateSuggestion}  ${suggestion.address.country}`;
            
             div.addEventListener("click", async () => {
 
@@ -225,10 +217,7 @@ function displaySuggestions(suggestions) {
 
                 let placeName = suggestion.name
                 let state = suggestion.address.state || suggestion.address.province
-               
-
-                console.log(state);
-                
+                               
 
                 country = suggestion.address.country_code
 
