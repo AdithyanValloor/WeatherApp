@@ -14,7 +14,7 @@ window.addEventListener('load', async ()=>{
 
     // DEFAULT LOCATION
 
-    const weatherData = await weatherAPICall('kochi')
+    const weatherData = await weatherAPICall('Kochi')
     const airQuality = await airQualityAPI(weatherData)
 
     displyWeather(weatherData,airQuality)
@@ -23,7 +23,6 @@ window.addEventListener('load', async ()=>{
     // CURRENT LOCATION OF USER 
 
     getLocation()
-
 
 })
 
@@ -35,6 +34,8 @@ let country = ''
 async function weatherAPICall(city,state,country){
 
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city},${state},${country}&appid=${apiKey}`
+    
+    // const api = `https://api.openweathermap.org/data/2.5/weather?id=${placeId}&appid=${apiKey}`
 
     try {
  
@@ -47,6 +48,41 @@ async function weatherAPICall(city,state,country){
         }
 
         const data = await response.json()
+
+        console.log(data);
+        
+        return data
+
+    } catch (error) {
+        
+        console.log(error);
+        
+    }
+
+}
+
+//=========================================== WEATHER API WITH LAT & LON ===========================================
+
+async function weatherAPICallLatLon(lat,lon){
+
+    // const api = `https://api.openweathermap.org/data/2.5/weather?id=${placeId}&appid=${apiKey}`
+
+
+    const api = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`
+    try {
+ 
+        const response = await fetch(api)
+
+        if(response.status === 404){
+
+            // alert('Error with your current coords'); 
+
+        }
+
+        const data = await response.json()
+
+        console.log(data);
+        
 
         return data
 
@@ -151,7 +187,7 @@ input.addEventListener("input", async () => {
     }
 
     try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1`);
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`);
         const data = await response.json();
 
         console.log(data);
@@ -168,27 +204,39 @@ function displaySuggestions(suggestions) {
 
     suggestionsContainer.innerHTML = ''; 
 
-    suggestions = suggestions.slice(0,3)
+    let suggestionsArr = suggestions.slice(0,5)
 
-    suggestions.forEach(suggestion => {
+    suggestionsArr.forEach(suggestion => {
         const div = document.createElement("div");
         div.classList.add("suggestion");
        
-        if(suggestion.addresstype === 'city' || suggestion.addresstype === 'county' || suggestion.addresstype === 'town' || suggestion.addresstype === 'village' || suggestion.addresstype === 'municipality' || suggestion.addresstype === 'state'){
-            
+        if( suggestion.addresstype === 'village' || suggestion.addresstype === 'city' || suggestion.addresstype === 'county' || suggestion.addresstype === 'town' || suggestion.addresstype === 'municipality' || suggestion.addresstype === 'state'){
 
-            div.textContent = `${suggestion.name}, ${suggestion.address.state || suggestion.address.province || ''} ${suggestion.address.country}`;
+            div.textContent = `${suggestion.name}, ${suggestion.address.state || suggestion.address.province }, ${suggestion.address.country}`;
+           
             div.addEventListener("click", async () => {
+
                 city = suggestion.name; 
+
                 suggestionsContainer.innerHTML = ''; 
 
-                state = suggestion.address.state
-                country = suggestion.address.country_code 
+                let lat = suggestion.lat
+                let lon = suggestion.lon
 
-                console.log(state,country);
+                let placeName = suggestion.name
+                let state = suggestion.address.state || suggestion.address.province
+               
+
+                console.log(state);
                 
 
-                const weatherData = await weatherAPICall(city,state,country)
+                country = suggestion.address.country_code
+
+
+                locationState = false
+                 
+
+                const weatherData = await weatherAPICallLatLon(lat,lon)
 
                 if(weatherData.cod === '404'){
                     
@@ -206,7 +254,7 @@ function displaySuggestions(suggestions) {
 
                 const airQuality = await airQualityAPI(weatherData)
 
-                displyWeather(weatherData,airQuality)
+                displyWeather(weatherData,airQuality,locationState,state,placeName)
 
 
             });
@@ -236,6 +284,9 @@ function getLocation(){
 
         const airQuality = await airQualityAPI(weatherData)
 
+        console.log('location working');
+        
+
         const location = true
 
         displyWeather(weatherData,airQuality,location)
@@ -257,7 +308,11 @@ form.addEventListener('submit', async (e)=>{
     
     e.preventDefault()
 
-    let city = input.value
+    if (!suggestionsContainer.contains(event.target) && event.target !== input) {
+        suggestionsContainer.innerHTML = '';
+    }
+
+    let city = input.value.trim()
 
     const weatherData = await weatherAPICall(city)
 
@@ -283,7 +338,7 @@ form.addEventListener('submit', async (e)=>{
 
 // =========================================== DISPLAY WEATHER FUNCTION ===========================================
 
-async function displyWeather(data,air,location){
+async function displyWeather(data,air,location,state,placeName){
 
     const countryName = await countryInFull(data)
 
@@ -294,11 +349,18 @@ async function displyWeather(data,air,location){
 
     const windspeed = Math.trunc(data.wind.speed * 3.6)
 
+    let stateName = state
+
+    if(!state){
+
+        stateName = ''
+    }
+
     const temp = Math.trunc( data.main.temp - 273.15)
     const maxTemp = Math.trunc(data.main.temp_max - 273.15)
     const minTemp = Math.trunc(data.main.temp_min - 273.15)
     const feelsLikeTemp = Math.trunc(data.main.feels_like - 273.15)
-    const placeName = data.name
+    placeName = placeName || data.name
     const pressure = data.main.pressure
     const humidity = data.main.humidity
     const visibility = data.visibility/1000
@@ -360,7 +422,7 @@ async function displyWeather(data,air,location){
                     <div class="location">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg>   
                         <p>
-                            ${placeName} , ${countryName}
+                            ${placeName}, ${stateName}  ${countryName}
                         </p>
                     </div>
                 </div>
