@@ -210,8 +210,6 @@ function displaySuggestions(suggestions) {
 
         if( suggestion.class === 'place' || suggestion.addresstype === "village" || suggestion.addresstype === 'town' || suggestion.addresstype === "city" || suggestion.addresstype === 'municipality'  || suggestion.addresstype === "province" || suggestion.addresstype === "local_authority" || suggestion.addresstype === 'county' || suggestion.addresstype === 'state' ){
 
-            // "local_authority"
-
             if (!seenLocations.has(displayName)) {
                 seenLocations.add(displayName); 
                 uniqueSuggestions.push(suggestion); 
