@@ -28,18 +28,10 @@ window.addEventListener('load', async ()=>{
 
 //=========================================== WEATHER API ===========================================
 
-let state = ''
-let country = ''
-
-async function weatherAPICall(city,state,country){
+async function weatherAPICall(city){
 
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}` 
     
-    // api = `https://api.openweathermap.org/data/2.5/weather?q=${city},${state}&appid=${apiKey}`
-
-    
-    // const api = `https://api.openweathermap.org/data/2.5/weather?id=${placeId}&appid=${apiKey}`
-
     try {
  
         const response = await fetch(api)
@@ -66,19 +58,11 @@ async function weatherAPICall(city,state,country){
 
 async function weatherAPICallLatLon(lat,lon){
 
-    // const api = `https://api.openweathermap.org/data/2.5/weather?id=${placeId}&appid=${apiKey}`
-
-
     const api = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`
+
     try {
  
         const response = await fetch(api)
-
-        if(response.status === 404){
-
-            // alert('Error with your current coords'); 
-
-        }
 
         const data = await response.json()
         
@@ -185,10 +169,7 @@ input.addEventListener("input", async () => {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`);
         const data = await response.json();
-
-        console.log(data);
-        
-      
+   
         displaySuggestions(data);
 
     } catch (error) {
@@ -218,8 +199,6 @@ function displaySuggestions(suggestions) {
         }
          
     });
-
-    console.log(uniqueSuggestions);
 
     uniqueSuggestions.slice(0,4).forEach(suggestion => {
 
@@ -297,10 +276,7 @@ function getLocation(){
 
         const weatherData = await weatherAPICall(cityData)
 
-        const airQuality = await airQualityAPI(weatherData)
-
-        console.log('location working');
-        
+        const airQuality = await airQualityAPI(weatherData) 
 
         const location = true
 
@@ -310,7 +286,7 @@ function getLocation(){
     
     function locationFailed(){
     
-        // alert('Pleaser turn on your location')
+        alert('Pleaser turn on your location')
     
     }
 
@@ -325,12 +301,6 @@ form.addEventListener('submit', async (e)=>{
 
     suggestionsContainer.style.display = 'none'
 
-    // stopAsyncFunction()
-
-    // function stopAsyncFunction() {
-    //     shouldContinue = false;
-    // }
-   
     let city = input.value.trim()
 
     const weatherData = await weatherAPICall(city)
@@ -373,6 +343,7 @@ async function displyWeather(data,air,location,state,placeName){
     if(!state){
 
         stateName = ''
+
     }
 
     const temp = Math.trunc( data.main.temp - 273.15)
@@ -580,10 +551,9 @@ function sunriseSunset(data,req){
 
 }
 
-var timeIn24 = 0
-
 //=========================================== GET CURRENT TIME & DATE ===========================================
 
+var timeIn24 = 0
 
 function getDate(data,req){
 
@@ -618,7 +588,6 @@ function getDate(data,req){
 
         return formatedDate
     }
-    
 }
 
 // =========================================== GET WEATHER ICON ===========================================
@@ -626,6 +595,8 @@ function getDate(data,req){
 function iconFetch(data){
     
     if(timeIn24 === 0 || timeIn24 < 6){
+
+        // MIDNIGHT TO EARLY MORNING 
 
         document.body.style = `background-image: linear-gradient(rgba(1, 1, 1, 0.5),rgba(0, 0, 0, 0.2)) ,  url('./Images/misty-day-fog-nature-trees.jpg');`
 
@@ -646,6 +617,8 @@ function iconFetch(data){
 
     else if(timeIn24 > 17){
 
+        // NIGHT
+
         document.body.style = `background-image: linear-gradient(rgba(1, 1, 1, 0.5),rgba(0, 0, 0, 0.2)) ,  url('./Images/misty-day-fog-nature-trees.jpg');`
 
         if(data.weather[0].description === "scattered clouds" ){
@@ -665,6 +638,8 @@ function iconFetch(data){
     }
 
     else if(timeIn24 > 5 ){
+
+        // DAY
 
         document.body.style = `background-image: linear-gradient(rgba(0, 168, 235, 0.7),rgba(23, 130, 24, 0.2)) ,  url('./Images/misty-day-fog-nature-trees.jpg');`
 
@@ -728,7 +703,5 @@ function iconFetch(data){
     }
     else if(data.weather[0].main === "Mist"){
         return "./icons/mist.svg"
-    }
-      
+    }  
 }
-
