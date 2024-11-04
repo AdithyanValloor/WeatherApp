@@ -189,7 +189,21 @@ function displaySuggestions(suggestions) {
 
         const displayName = suggestion.address.county;
 
-        if( suggestion.class === 'place' || suggestion.addresstype === "village" || suggestion.addresstype === 'town' || suggestion.addresstype === "city" || suggestion.addresstype === 'municipality'  || suggestion.addresstype === "province" || suggestion.addresstype === "local_authority" || suggestion.addresstype === 'county' || suggestion.addresstype === 'state' ){
+        if( suggestion.class === 'place' || 
+
+            suggestion.addresstype === "village" || 
+
+            suggestion.addresstype === 'town' || 
+
+            suggestion.addresstype === "city" || 
+
+            suggestion.addresstype === 'municipality'  || 
+
+            suggestion.addresstype === "province" || 
+
+            suggestion.addresstype === 'county' || 
+            
+            suggestion.addresstype === 'state' ){
 
             if (!seenLocations.has(displayName)) {
                 seenLocations.add(displayName); 
@@ -199,6 +213,9 @@ function displaySuggestions(suggestions) {
         }
          
     });
+
+    console.log(uniqueSuggestions);
+    
 
     uniqueSuggestions.slice(0,4).forEach(suggestion => {
 
